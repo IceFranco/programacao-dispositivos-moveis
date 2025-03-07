@@ -30,3 +30,4 @@ function modificarTarefa(idTarefa, tarefaModificada) {
 }
 
 export { listarTarefas, adicionarTarefa, removerTarefa, modificarTarefa };
+ 
