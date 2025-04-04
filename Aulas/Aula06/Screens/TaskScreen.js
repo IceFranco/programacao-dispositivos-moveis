@@ -8,31 +8,42 @@ import {
   Modal,
   Button,
   Divider,
+  Text,
 } from "react-native-paper";
 
 function TaskScreen() {
   const [tarefas, setTarefas] = useState([]);
   const [tarefa, setTarefa] = useState("");
-  const [concluida, setConcluida] = useState(false);
+  const [refresh, setRefresh] = useState(false);
   const [exibeModal, setExibeModal] = useState(false);
+  const [exibeAlerta, setExibeAlerta] = useState(false);
 
   return (
     <View style={styles.container}>
       <Appbar.Header>
         <Appbar.Content title="Minhas Tarefas" />
       </Appbar.Header>
+      {refresh && <></>}
       <FlatList
         data={tarefas}
-        keyExtractor={(item, index) => index}
+        keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
           <>
             <List.Item
-              onPress={() => setConcluida(!concluida)}
-              title={item}
+              onLongPress={() => {
+                setExibeAlerta(true);
+              }}
+              onPress={() => {
+                item.concluida = !item.concluida;
+                setRefresh(!refresh);
+              }}
+              title={item.nome}
               right={(props) => (
                 <List.Icon
                   {...props}
-                  icon={concluida ? "check-circle-outline" : "circle-outline"}
+                  icon={
+                    item.concluida ? "check-circle-outline" : "circle-outline"
+                  }
                 />
               )}
             />
@@ -50,7 +61,10 @@ function TaskScreen() {
           <Button
             onPress={() => {
               if (tarefa) {
-                setTarefas([...tarefas, tarefa]);
+                setTarefas([
+                  ...tarefas,
+                  { id: tarefas.length + 1, nome: tarefa, concluida: false },
+                ]);
               }
               setTarefa("");
               setExibeModal(false);
@@ -58,6 +72,15 @@ function TaskScreen() {
           >
             Salvar
           </Button>
+        </View>
+      </Modal>
+      <Modal visible={exibeAlerta}>
+        <View style={styles.modal}>
+          <Text variant="labelLarge">Deseja apagar a tarefa?</Text>
+          <Button 
+          onPress={() => setExibeAlerta(false)}>Não</Button>
+          <Button 
+          onPress={() => setExibeAlerta(false)}>Sim</Button>
         </View>
       </Modal>
     </View>
